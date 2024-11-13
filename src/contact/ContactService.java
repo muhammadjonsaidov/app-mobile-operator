@@ -23,8 +23,8 @@ public class ContactService {
         System.out.println("2=> " + simCards[0].getName());
 
         boolean secondHas = simCards[1] != null;
-        if (secondHas)
-            System.out.println("3=> " + simCards[1].getName());
+        if (secondHas) System.out.println("3=> " + simCards[1].getName());
+
 
         int com = scanner.nextInt();
         if (com < 1 || !secondHas && com > 2 || com > 3) {
@@ -33,12 +33,9 @@ public class ContactService {
             return;
         }
 
-        if (com == 1)
-            insertContact(phone.getContacts());
-        else if (com == 2)
-            insertContact(simCards[0].getContacts());
-        else
-            insertContact(simCards[1].getContacts());
+        if (com == 1) insertContact(phone.getContacts());
+        else if (com == 2) insertContact(simCards[0].getContacts());
+        else insertContact(simCards[1].getContacts());
     }
 
     public void edit() {
@@ -55,40 +52,50 @@ public class ContactService {
     }
 
     private void insertContact(Contact[] contacts, Contact contact) {
+        for (int i = 0; i < contacts.length; i++)
+            if (contacts[i] == null) {
+                contacts[i] = contact;
+                System.out.println("Contact added successfully!");
+                return;
+            }
 
+        System.out.println("No space to add contact.");
     }
 
     private boolean checkName(Contact[] contacts, Contact contact) {
-        //todo
+        for (Contact existingContact : contacts)
+            if (existingContact != null && existingContact.getName().equals(contact.getName()))
+                return false;
+
         return true;
     }
 
     private Contact getContactInfoFromConsole() {
-        //todo
-        return null;
+        System.out.println("Enter contact name:");
+        String name = scanner.nextLine();
+
+        System.out.println("Enter contact number:");
+        String number = scanner.nextLine();
+
+        return new Contact(name, number);
     }
 
     private boolean checkSpace(Contact[] contacts) {
-        for (int i = 0; i < contacts.length; i++)
-            if (contacts[i] == null)
-                return true;
+        for (Contact contact : contacts)
+            if (contact == null) return true;
 
         return false;
     }
 
     private void insertContact(Contact[] contacts) {
-
-        boolean hasSpace = checkSpace(contacts);
-        if (!hasSpace) {
+        if (!(checkSpace(contacts))) {
             System.out.println("No space on the phone");
             add();
             return;
         }
 
         Contact contact = getContactInfoFromConsole();
-
-        boolean unique = checkName(contacts, contact);
-        if (!unique) {
+        if (!(checkName(contacts, contact))) {
             System.out.println("Name of contact already exists");
             add();
             return;

@@ -39,4 +39,7 @@ public class Contact {
         this.name = name;
     }
 
+    public void setNumber(String number) {
+        this.number = number;
+    }
 }

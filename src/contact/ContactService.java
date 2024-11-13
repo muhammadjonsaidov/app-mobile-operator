@@ -48,6 +48,67 @@ public class ContactService {
     }
 
     public void edit() {
+        while (true) {
+            System.out.println("Select the location to update contacts: ");
+            System.out.println("1=> Phone");
+
+            SimCard[] simCards = phone.getSimCards();
+            System.out.println("2=> " + simCards[0].getName());
+
+            boolean secondHas = simCards[1] != null;
+            if (secondHas) System.out.println("3=> " + simCards[1].getName());
+            System.out.println("0=> Back to main menu");
+
+            int com = scanner.nextInt();
+            scanner.nextLine();
+
+            if (com < 0 || (!secondHas && com > 2) || com > 3) {
+                System.err.println("Choose the correct place");
+                continue;
+            }
+
+            Contact[] contacts;
+            switch (com) {
+                case 1 -> contacts = phone.getContacts();
+                case 2 -> contacts = simCards[0].getContacts();
+                case 3 -> contacts = simCards[1].getContacts();
+                case 0 -> {
+                    return;
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + com);
+            }
+
+            System.out.println("Contacts in the selected location:");
+            printContacts(contacts);
+
+            System.out.println("Enter the index of the contact to edit:");
+            int index = scanner.nextInt() - 1;
+            scanner.nextLine();
+
+            if (index < 0 || index >= contacts.length || contacts[index] == null){
+                System.out.println("Invalid contact index. Please try again");
+                continue;
+            }
+
+            Contact contact = contacts[index];
+            System.out.println("Editing contact: " + contact.getName());
+
+            System.out.println("Enter new name (leave blank to keep current):");
+            String newName = scanner.nextLine().trim();
+            if (!newName.isEmpty()) {
+                contact.setName(newName);
+            }
+
+            System.out.println("Enter new number (leave blank to keep current):");
+            String newNumber = scanner.nextLine().trim();
+            if (!newNumber.isEmpty()) {
+                contact.setNumber(newNumber);
+            }
+
+            contacts[index] = contact;
+            System.out.println("Contact successfully updated!");
+            return;
+        }
     }
 
     public void list() {
@@ -79,7 +140,7 @@ public class ContactService {
                 }
                 case 2 -> {
                     System.out.println("Contacts in " + simCards[0].getName() + ":");
-                        printContacts(simCards[0].getContacts());
+                    printContacts(simCards[0].getContacts());
                 }
                 case 3 -> {
                     System.out.println("Contacts in " + simCards[1].getName() + ":");
@@ -90,7 +151,6 @@ public class ContactService {
                 }
             }
         }
-
     }
 
     public void search() {
@@ -159,6 +219,7 @@ public class ContactService {
         if (!hasContacts) {
             System.out.println("No contacts found.");
         }
+        scanner.nextLine();
     }
 
     private void insertContact(Contact[] contacts, Contact contact) {

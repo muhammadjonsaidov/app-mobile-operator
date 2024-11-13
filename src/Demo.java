@@ -15,9 +15,9 @@ public class Demo {
             int com;
             System.out.println("""
                     Choose commands:
-                    0=> Terminate,
+                    0 => Terminate,
                     1 => Add, 2 => Edit,
-                    3=> List, 4 => Search,
+                    3 => List, 4 => Search,
                     5 => Delete
                     """);
             com = scanner.nextInt();

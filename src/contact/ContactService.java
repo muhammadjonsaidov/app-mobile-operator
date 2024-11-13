@@ -16,32 +16,81 @@ public class ContactService {
     }
 
     public void add() {
-        System.out.println("Choose saving place: ");
-        System.out.println("1=> Phone");
+        while (true) {
+            System.out.println("Choose saving place: ");
+            System.out.println("1=> Phone");
 
-        SimCard[] simCards = phone.getSimCards();
-        System.out.println("2=> " + simCards[0].getName());
+            SimCard[] simCards = phone.getSimCards();
+            System.out.println("2=> " + simCards[0].getName());
 
-        boolean secondHas = simCards[1] != null;
-        if (secondHas) System.out.println("3=> " + simCards[1].getName());
+            boolean secondHas = simCards[1] != null;
+            if (secondHas) System.out.println("3=> " + simCards[1].getName());
+            System.out.println("0=> Back to main menu");
 
+            int com = scanner.nextInt();
+            scanner = new Scanner(System.in);
+            if (com < 0 || !secondHas && com > 2 || com > 3) {
+                System.err.println("Choose correct place");
+                add();
+                return;
+            }
 
-        int com = scanner.nextInt();
-        if (com < 1 || !secondHas && com > 2 || com > 3) {
-            System.err.println("Choose correct place");
-            add();
-            return;
+            switch (com) {
+                case 1 -> insertContact(phone.getContacts());
+                case 2 -> insertContact(simCards[0].getContacts());
+                case 3 -> insertContact(simCards[1].getContacts());
+                case 0 -> {
+                    return;
+                }
+            }
+
         }
-
-        if (com == 1) insertContact(phone.getContacts());
-        else if (com == 2) insertContact(simCards[0].getContacts());
-        else insertContact(simCards[1].getContacts());
     }
 
     public void edit() {
     }
 
     public void list() {
+        // todo: contact list phone | sim card 1 | sim card 2 if it exists
+        while (true) {
+            System.out.println("Select a place to view contact information: ");
+            System.out.println("1=> Phone");
+
+            SimCard[] simCards = phone.getSimCards();
+            System.out.println("2=> " + simCards[0].getName());
+
+            boolean secondHas = simCards[1] != null;
+            if (secondHas) System.out.println("3=> " + simCards[1].getName());
+            System.out.println("0=> Back to previous section");
+
+            int com = scanner.nextInt();
+            scanner = new Scanner(System.in);
+
+            if (com < 0 || !secondHas && com > 2 || com > 3) {
+                System.err.println("Choose correct place");
+                list();
+                return;
+            }
+
+            switch (com) {
+                case 1 -> {
+                    System.out.println("Contacts in Phone:");
+                    printContacts(phone.getContacts());
+                }
+                case 2 -> {
+                    System.out.println("Contacts in " + simCards[0].getName() + ":");
+                    printContacts(simCards[0].getContacts());
+                }
+                case 3 -> {
+                    System.out.println("Contacts in " + simCards[1].getName() + ":");
+                    printContacts(simCards[1].getContacts());
+                }
+                case 0 -> {
+                    return;
+                }
+            }
+        }
+
     }
 
     public void search() {
@@ -49,6 +98,19 @@ public class ContactService {
 
     public void delete() {
 
+    }
+
+    private void printContacts(Contact[] contacts) {
+        boolean hasContacts = false;
+        for (int i = 0; i < contacts.length; i++)
+            if (contacts[i] != null) {
+                System.out.println((i + 1) + ". " + contacts[i].getName() + ": " + contacts[i].getNumber());
+                hasContacts = true;
+            }
+
+        if (!hasContacts) {
+            System.out.println("No contacts found.");
+        }
     }
 
     private void insertContact(Contact[] contacts, Contact contact) {

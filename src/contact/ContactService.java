@@ -83,9 +83,8 @@ public class ContactService {
 
             System.out.println("Enter the index of the contact to edit:");
             int index = scanner.nextInt() - 1;
-            scanner.nextLine();
 
-            if (index < 0 || index >= contacts.length || contacts[index] == null){
+            if (index < 0 || index >= contacts.length || contacts[index] == null) {
                 System.out.println("Invalid contact index. Please try again");
                 continue;
             }
@@ -205,7 +204,58 @@ public class ContactService {
     }
 
     public void delete() {
+        while (true) {
+            System.out.println("Select the location to delete contacts from: ");
+            System.out.println("1=> Phone");
 
+            SimCard[] simCards = phone.getSimCards();
+            System.out.println("2=> " + simCards[0].getName());
+
+            boolean secondHas = simCards[1] != null;
+            if (secondHas) System.out.println("3=> " + simCards[1].getName());
+            System.out.println("0=> Back to main menu");
+
+            int com = scanner.nextInt();
+            scanner.nextLine();  // Consume newline
+
+            if (com < 0 || (!secondHas && com > 2) || com > 3) {
+                System.err.println("Choose the correct place");
+                continue;
+            }
+
+            Contact[] contacts;
+            switch (com) {
+                case 1 -> contacts = phone.getContacts();
+                case 2 -> contacts = simCards[0].getContacts();
+                case 3 -> contacts = simCards[1].getContacts();
+                case 0 -> {
+                    return;
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + com);
+            }
+
+            System.out.println("Contacts in the selected location:");
+            printContacts(contacts);
+
+            System.out.println("Enter the index of the contact to delete: ");
+            int index = scanner.nextInt() - 1;
+
+            if (index < 0 || index >= contacts.length || contacts[index] == null) {
+                System.out.println("Invalid contact index. Please try again.");
+                continue;
+            }
+
+            System.out.println("Are you sure you want to delete " + contacts[index].getName() + "? (y/n)");
+            String del = scanner.nextLine().trim().toLowerCase();
+
+            if (del.equals("y")) {
+                contacts[index] = null;
+                System.out.println("Contact successfully deleted!");
+            } else {
+                System.out.println("Deletion canceled");
+            }
+            return;
+        }
     }
 
     private void printContacts(Contact[] contacts) {
@@ -219,7 +269,6 @@ public class ContactService {
         if (!hasContacts) {
             System.out.println("No contacts found.");
         }
-        scanner.nextLine();
     }
 
     private void insertContact(Contact[] contacts, Contact contact) {

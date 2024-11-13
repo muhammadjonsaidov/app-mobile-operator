@@ -79,7 +79,7 @@ public class ContactService {
                 }
                 case 2 -> {
                     System.out.println("Contacts in " + simCards[0].getName() + ":");
-                    printContacts(simCards[0].getContacts());
+                        printContacts(simCards[0].getContacts());
                 }
                 case 3 -> {
                     System.out.println("Contacts in " + simCards[1].getName() + ":");
@@ -94,6 +94,54 @@ public class ContactService {
     }
 
     public void search() {
+        while (true) {
+            System.out.println("Select a place to search in contact list");
+            System.out.println("1=> Phone");
+
+            SimCard[] simCards = phone.getSimCards();
+            System.out.println("2=> " + simCards[0].getName());
+
+            boolean secondHas = simCards[1] != null;
+            if (secondHas) System.out.println("3=> " + simCards[1].getName());
+            System.out.println("0=> Back to previous section");
+
+            int com = scanner.nextInt();
+            scanner = new Scanner(System.in);
+
+            if (com < 0 || !secondHas && com > 2 || com > 3) {
+                System.err.println("Choose correct place");
+                search();
+                return;
+            }
+
+            Contact[] contacts;
+            switch (com) {
+                case 1 -> contacts = phone.getContacts();
+                case 2 -> contacts = simCards[0].getContacts();
+                case 3 -> contacts = simCards[1].getContacts();
+                case 0 -> {
+                    return;
+                }
+                default -> throw new IllegalStateException("Unexpected value: " + com);
+            }
+
+            System.out.println("Enter name to search:");
+            String name = scanner.nextLine();
+            String searchByName = name.trim().toLowerCase();
+
+            boolean isFound = false;
+            for (Contact contact : contacts) {
+                if (contact != null && contact.getName().toLowerCase().startsWith(searchByName)) {
+                    System.out.println(contact.getName() + ": " + contact.getNumber());
+                    isFound = true;
+                }
+            }
+
+            if (!isFound) {
+                System.out.println("No contacts found starting with: " + name);
+            }
+
+        }
     }
 
     public void delete() {
